@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.30)
 project(ShadeTorrentApi)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
+
+if(WIN32)
+    add_definitions(-D_WIN32_WINNT=0x0601)
+endif()
 
 find_package(fmt CONFIG REQUIRED)
 find_package(LibtorrentRasterbar CONFIG REQUIRED)
