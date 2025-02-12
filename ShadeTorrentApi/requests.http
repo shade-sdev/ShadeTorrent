@@ -1,0 +1,29 @@
+### Add new torrent via magnet link
+POST http://localhost:8080/torrents
+Content-Type: text/plain
+
+magnet:?xt=urn:btih:F782E890A3F17A2CAE5517B65A2703F17A1B4DB5&dn=The+Last+Ship+-+Stagione+01+%282014%29+%5BCOMPLETA%5D+1080p+H264+EAC3+ITA+ENG+SUB+ITA+ENG&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.demonii.com%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.tracker.cl%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexplodie.org%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.ololosh.space%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.dump.cl%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.bittor.pw%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker-udp.gbitt.info%3A80%2Fannounce&tr=udp%3A%2F%2Fopentracker.io%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.free-tracker.ga%3A6969%2Fannounce&tr=udp%3A%2F%2Fns-1.x-fins.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=udp%3A%2F%2Fopentracker.i2p.rocks%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Fcoppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.zer0day.to%3A1337%2Fannounce
+
+> {%
+    client.test("Torrent added successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.hasOwnProperty("id"), "Response missing torrent ID");
+    });
+
+    client.global.set("torrent_id", response.body.id);
+%}
+
+### Get all torrent statuses
+GET http://localhost:8080/torrents
+
+### Get specific torrent status
+GET http://localhost:8080/torrents/{{torrent_id}}
+
+### Pause torrent
+POST http://localhost:8080/torrents/{{torrent_id}}/pause
+
+### Resume torrent
+POST http://localhost:8080/torrents/{{torrent_id}}/resume
+
+### Delete torrent
+DELETE http://localhost:8080/torrents/{{torrent_id}}

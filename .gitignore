@@ -1,0 +1,9 @@
+# Ignore the .git directory
+.git
+
+# Ignore the .idea directory (IDE metadata)
+.idea/
+
+# Ignore cmake build output
+cmake-build-debug/
+cmake-build-release/

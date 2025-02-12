@@ -1,0 +1,24 @@
+{
+  "name" : "shadetorrentapi",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "5c41ff21f6feda702a7d5a1afc765f88d25783c5",
+  "dependencies" : [ {
+    "name" : "vcpkg-cmake-config",
+    "version>=" : "2024-05-23"
+  }, {
+    "name" : "vcpkg-cmake",
+    "version>=" : "2024-04-23"
+  }, {
+    "name" : "libtorrent",
+    "version>=" : "2.0.11"
+  }, {
+    "name" : "crow",
+    "version>=" : "1.2.0"
+  }, {
+    "name" : "asio",
+    "version>=" : "1.32.0"
+  }, {
+    "name" : "fmt",
+    "version>=" : "11.0.2#1"
+  } ]
+}
