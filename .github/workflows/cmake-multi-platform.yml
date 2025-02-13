@@ -60,15 +60,15 @@ jobs:
       if: runner.os != 'Windows'
       shell: bash
       run: |
-        git clone https://github.com/microsoft/vcpkg.git $GITHUB_WORKSPACE/vcpkg
+        git clone https://github.com/microsoft/vcpkg.git ${{ github.workspace }}/vcpkg
         ./vcpkg/bootstrap-vcpkg.sh
-    
-        - name: Install dependencies using vcpkg manifest mode
-          run: |
-            VCPKG_ROOT="${{ github.workspace }}/vcpkg"
-            cd ${{ github.workspace }}/ShadeTorrentApi  # Ensure we're in the right directory
-            VCPKG_FEATURE_FLAGS=manifests "$VCPKG_ROOT"/vcpkg install
-          shell: bash
+
+    - name: Install dependencies using vcpkg manifest mode
+      run: |
+        VCPKG_ROOT="${{ github.workspace }}/vcpkg"
+        cd ${{ github.workspace }}/ShadeTorrentApi  # Ensure we're in the right directory
+        VCPKG_FEATURE_FLAGS=manifests "$VCPKG_ROOT"/vcpkg install
+      shell: bash
 
     - name: Configure CMake
       run: >
