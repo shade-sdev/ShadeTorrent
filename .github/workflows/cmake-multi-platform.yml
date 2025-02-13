@@ -101,15 +101,18 @@ jobs:
       working-directory: build
       run: ctest --build-config ${{ matrix.build_type }}
 
-    - name: Compress build artifacts
+    - name: Compress build artifacts (Linux)
+      if: runner.os == 'Linux'
       run: |
-        if [[ "${{ runner.os }}" == "Linux" ]]; then
-          tar -czf build_artifacts_linux.tar.gz -C build .
-          echo "ARTIFACT_PATH=build_artifacts_linux.tar.gz" >> $GITHUB_ENV
-        elif [[ "${{ runner.os }}" == "Windows" ]]; then
-          powershell -Command "Compress-Archive -Path build\\* -DestinationPath build_artifacts_windows.zip"
-          echo "ARTIFACT_PATH=build_artifacts_windows.zip" >> $GITHUB_ENV
-        fi
+        tar -czf build_artifacts_linux.tar.gz -C build .
+        echo "ARTIFACT_PATH=build_artifacts_linux.tar.gz" >> $GITHUB_ENV
+    
+    - name: Compress build artifacts (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        Compress-Archive -Path build\* -DestinationPath build_artifacts_windows.zip
+        echo "ARTIFACT_PATH=build_artifacts_windows.zip" >> $env:GITHUB_ENV
     
     - name: Get current date
       id: date
