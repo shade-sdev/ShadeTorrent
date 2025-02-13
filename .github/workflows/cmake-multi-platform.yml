@@ -113,8 +113,8 @@ jobs:
     
     - name: Get current date
       id: date
-      shell: bash  # Explicitly use bash for consistent date formatting
-      run: echo "date=$(date +'%Y%m%d-%H%M')" >> $GITHUB_OUTPUT
+      shell: bash
+      run: echo "date=$(date +'%Y%m%d-%H%M%S-%N' | cut -b1-21)" >> $GITHUB_OUTPUT
     
     - name: Create GitHub Release and Upload Artifacts
       uses: ncipollo/release-action@v1
