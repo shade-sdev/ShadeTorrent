@@ -103,18 +103,17 @@ jobs:
 
     - name: Compress build artifacts
       run: |
-        if [ ${{ runner.os }} == 'Linux' ]; then
+        if [[ "${{ runner.os }}" == "Linux" ]]; then
           tar -czf build_artifacts_linux.tar.gz -C build .  # Linux artifact compression
-        fi
-        if [ ${{ runner.os }} == 'Windows' ]; then
+        elif [[ "${{ runner.os }}" == "Windows" ]]; then
           powershell -Command "Compress-Archive -Path build\\* -DestinationPath build_artifacts_windows.zip"  # Windows artifact compression
         fi
 
     - name: Create GitHub Release and Upload Artifacts
       uses: ncipollo/release-action@v1
       with:
-        name: Release Build ${{ github.run_id }}
-        tag: ${{ github.run_id }} 
+        name: Release Build ${{ github.sha::8 }}
+        tag: ${{ github.sha::8 }} 
         artifacts: |
           build_artifacts_${{ runner.os }}.*
         token: ${{ secrets.GITHUB_TOKEN }}
