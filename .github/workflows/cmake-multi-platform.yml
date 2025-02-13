@@ -38,25 +38,36 @@ jobs:
             c_compiler: cl
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-    - name: Install vcpkg
+    - name: Install dependencies (Ubuntu)
+      if: runner.os == 'Linux'
+      run: sudo apt update && sudo apt install -y ninja-build gcc g++ clang cmake
+
+    - name: Install dependencies (Windows)
+      if: runner.os == 'Windows'
+      run: choco install ninja cmake
+
+    - name: Setup vcpkg
       run: |
         git clone https://github.com/microsoft/vcpkg.git ${{ github.workspace }}/vcpkg
-        ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.sh
+        ./vcpkg/bootstrap-vcpkg.sh
       shell: bash
 
-    - name: Install dependencies
-      run: ${{ github.workspace }}/vcpkg/vcpkg install --triplet=${{ matrix.triplet }} --manifest
+    - name: Install dependencies using vcpkg manifest mode
+      run: >
+        VCPKG_ROOT=${{ github.workspace }}/vcpkg
+        VCPKG_FEATURE_FLAGS=manifests $VCPKG_ROOT/vcpkg install
       shell: bash
 
     - name: Configure CMake
       run: >
-        cmake -B build 
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} 
-        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} 
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} 
-        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake 
+        cmake -B build
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
         -S ${{ github.workspace }}/ShadeTorrentApi
 
     - name: Build
