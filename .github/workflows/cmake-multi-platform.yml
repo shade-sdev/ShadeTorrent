@@ -104,13 +104,16 @@ jobs:
     - name: Compress build artifacts
       run: |
         if [[ "${{ runner.os }}" == "Linux" ]]; then
-          tar -czf build_artifacts_linux.tar.gz -C build .  # Linux artifact compression
+          tar -czf build_artifacts_linux.tar.gz -C build .
+          echo "ARTIFACT_PATH=build_artifacts_linux.tar.gz" >> $GITHUB_ENV
         elif [[ "${{ runner.os }}" == "Windows" ]]; then
-          powershell -Command "Compress-Archive -Path build\\* -DestinationPath build_artifacts_windows.zip"  # Windows artifact compression
+          powershell -Command "Compress-Archive -Path build\\* -DestinationPath build_artifacts_windows.zip"
+          echo "ARTIFACT_PATH=build_artifacts_windows.zip" >> $GITHUB_ENV
         fi
-
+    
     - name: Get current date
       id: date
+      shell: bash  # Explicitly use bash for consistent date formatting
       run: echo "date=$(date +'%Y%m%d-%H%M')" >> $GITHUB_OUTPUT
     
     - name: Create GitHub Release and Upload Artifacts
@@ -118,6 +121,5 @@ jobs:
       with:
         name: Release Build v${{ steps.date.outputs.date }}
         tag: v${{ steps.date.outputs.date }}
-        artifacts: |
-          build_artifacts_${{ runner.os }}.*
+        artifacts: ${{ env.ARTIFACT_PATH }}
         token: ${{ secrets.GITHUB_TOKEN }}
