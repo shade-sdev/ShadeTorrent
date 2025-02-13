@@ -49,22 +49,26 @@ jobs:
       if: runner.os == 'Windows'
       run: choco install ninja cmake
 
-    - name: Setup vcpkg
+    - name: Setup vcpkg (Windows)
+      if: runner.os == 'Windows'
+      shell: cmd
       run: |
-        git clone https://github.com/microsoft/vcpkg.git ${{ github.workspace }}/vcpkg
-        if [[ "${{ runner.os }}" == "Windows" ]]; then
-          ./vcpkg/bootstrap-vcpkg.bat
-        else
-          ./vcpkg/bootstrap-vcpkg.sh
-        fi
+        git clone https://github.com/microsoft/vcpkg.git %GITHUB_WORKSPACE%\vcpkg
+        call %GITHUB_WORKSPACE%\vcpkg\bootstrap-vcpkg.bat
+    
+    - name: Setup vcpkg (Linux/macOS)
+      if: runner.os != 'Windows'
       shell: bash
-
-    - name: Install dependencies using vcpkg manifest mode
       run: |
-        VCPKG_ROOT="${{ github.workspace }}/vcpkg"
-        cd ${{ github.workspace }}/ShadeTorrentApi  # Ensure we're in the right directory
-        VCPKG_FEATURE_FLAGS=manifests "$VCPKG_ROOT"/vcpkg install
-      shell: bash
+        git clone https://github.com/microsoft/vcpkg.git $GITHUB_WORKSPACE/vcpkg
+        ./vcpkg/bootstrap-vcpkg.sh
+    
+        - name: Install dependencies using vcpkg manifest mode
+          run: |
+            VCPKG_ROOT="${{ github.workspace }}/vcpkg"
+            cd ${{ github.workspace }}/ShadeTorrentApi  # Ensure we're in the right directory
+            VCPKG_FEATURE_FLAGS=manifests "$VCPKG_ROOT"/vcpkg install
+          shell: bash
 
     - name: Configure CMake
       run: >
