@@ -99,25 +99,20 @@ jobs:
       working-directory: build
       run: ctest --build-config ${{ matrix.build_type }}
 
-    - name: Compress artifacts (Linux/macOS)
-      if: runner.os != 'Windows'
-      run: tar -czf release.tar.gz -C build .
+    - name: Compress build artifacts
+      run: |
+        if [ ${{ runner.os }} == 'Linux' ]; then
+          tar -czf build_artifacts_linux.tar.gz -C build .  # Linux artifact compression
+        fi
+        if [ ${{ runner.os }} == 'Windows' ]; then
+          powershell -Command "Compress-Archive -Path build\\* -DestinationPath build_artifacts_windows.zip"  # Windows artifact compression
+        fi
 
-    - name: Compress artifacts (Windows)
-      if: runner.os == 'Windows'
-      run: powershell Compress-Archive -Path build\* -DestinationPath release.zip
-
-    - name: Create GitHub Release
+    - name: Create GitHub Release and Upload Artifacts
       uses: ncipollo/release-action@v1
       with:
-        artifacts: ${{ runner.os == 'Windows' && 'release.zip' || 'release.tar.gz' }}
+        tag: ${{ github.ref }}
+        artifacts: |
+          build_artifacts_${{ runner.os }}.*
         token: ${{ secrets.GITHUB_TOKEN }}
-        tag: ${{ github.run_id }}
-        name: Release Build ${{ github.run_id }}
-        body: |
-          This release contains the compiled binaries for ShadeTorrentApi.
-          - Built using CMake & vcpkg
-          - Compiler: ${{ matrix.c_compiler }}
-          - Build Type: ${{ matrix.build_type }}
-          - Platform: ${{ matrix.triplet }}
 
