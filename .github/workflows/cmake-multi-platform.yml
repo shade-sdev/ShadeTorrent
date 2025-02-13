@@ -109,12 +109,15 @@ jobs:
           powershell -Command "Compress-Archive -Path build\\* -DestinationPath build_artifacts_windows.zip"  # Windows artifact compression
         fi
 
+    - name: Get current date
+      id: date
+      run: echo "date=$(date +'%Y%m%d-%H%M')" >> $GITHUB_OUTPUT
+    
     - name: Create GitHub Release and Upload Artifacts
       uses: ncipollo/release-action@v1
       with:
-        name: Release Build ${{ github.sha }}
-        tag: ${{ github.sha }} 
+        name: Release Build v${{ steps.date.outputs.date }}
+        tag: v${{ steps.date.outputs.date }}
         artifacts: |
           build_artifacts_${{ runner.os }}.*
         token: ${{ secrets.GITHUB_TOKEN }}
-
