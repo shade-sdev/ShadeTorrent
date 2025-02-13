@@ -113,7 +113,8 @@ jobs:
     - name: Create GitHub Release and Upload Artifacts
       uses: ncipollo/release-action@v1
       with:
-        tag: ${{ github.ref }}
+        name: Release Build ${{ github.run_id }}
+        tag: ${{ github.run_id }} 
         artifacts: |
           build_artifacts_${{ runner.os }}.*
         token: ${{ secrets.GITHUB_TOKEN }}
